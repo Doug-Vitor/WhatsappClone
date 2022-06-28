@@ -54,5 +54,16 @@ class Format {
 
             return this;
         }
+
+        HTMLFormElement.prototype.getFormValues = function() {
+            return new FormData(this);
+        }
+
+        HTMLFormElement.prototype.getJsonFormValues = function() {
+            let json = {};
+            this.getFormValues().forEach((value, key) => {
+                json[key] = value;
+            });
+        }
     }
 }

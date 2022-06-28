@@ -46,6 +46,27 @@ class AppController {
         this.elements.btnClosePanelAddContact.on('click', () => {
             this.elements.panelAddContact.toggleClass('open');
         });
+
+        this.elements.photoContainerEditProfile.on('click', () => {
+            this.elements.inputProfilePhoto.click();
+        });
+
+        this.elements.inputNamePanelEditProfile.on('keypress', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                this.elements.btnSavePanelEditProfile.click();
+            }
+        });
+
+        this.elements.btnSavePanelEditProfile.on('click', () => {
+            console.log('click', this.elements.inputNamePanelEditProfile.innerHTML);
+        });
+
+        this.elements.formPanelAddContact.on('submit', event => {
+            event.preventDefault();
+
+            let datas = this.elements.formPanelAddContact.getJsonFormValues();
+        })
     }
 
     closeLeftPanels() {
