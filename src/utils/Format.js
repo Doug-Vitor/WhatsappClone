@@ -5,6 +5,15 @@ class Format {
         return Object.keys(div.firstChild.dataset)[0];
     }
 
+    static toTime(duration) {
+        let seconds = parseInt((duration / 1000) % 60).toString().padStart(2, '0');
+        let minutes = parseInt((duration / (1000 * 60)) % 60);
+        let hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+
+        if (hours > 0) return `${hours}:${minutes}:${seconds}`;
+        else return `${minutes}:${seconds}`
+    }
+
     static elementsPrototype() {
         Element.prototype.toggle = function() {
             this.style.display = this.style.display == 'block' ? 'none' : 'block';

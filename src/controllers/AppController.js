@@ -131,11 +131,21 @@ class AppController {
         this.elements.btnCloseModalContacts.on('click', () => {
             this.elements.modalContacts.hide();
         });
-    }
 
-    closeLeftPanels() {
-        this.elements.panelAddContact.hide();
-        this.elements.panelEditProfile.hide();
+        this.elements.btnSendMicrophone.on('click', () => {
+            this.elements.recordMicrophone.show();
+            this.elements.btnSendMicrophone.hide();
+            
+            this.startAudioTimer();
+        });
+
+        this.elements.btnCancelMicrophone.on('click', () => {
+            this.closeMicrophoneArea();
+        });
+
+        this.elements.btnFinishMicrophone.on('click', () => {
+            this.closeMicrophoneArea();
+        });
     }
 
     closeMainPanels() {
@@ -144,8 +154,26 @@ class AppController {
         this.elements.panelCamera.removeClass('open');
     }
 
+    closeLeftPanels() {
+        this.elements.panelAddContact.hide();
+        this.elements.panelEditProfile.hide();
+    }
+
     closeAttachedMenu(event) {
         document.removeEventListener('click', this.closeAttachedMenu);
         this.elements.menuAttach.removeClass('open');
+    }
+
+    closeMicrophoneArea() {
+        this.elements.recordMicrophone.hide();
+        this.elements.btnSendMicrophone.show();
+        clearInterval(this._recordAudioInterval);
+    }
+
+    startAudioTimer() {
+        let start = Date.now();
+        this._recordAudioInterval = setInterval(() => {
+            this.elements.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now() - start);
+        }, 100);
     }
 }
