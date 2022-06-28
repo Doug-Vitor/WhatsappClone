@@ -1,7 +1,8 @@
 class AppController {
     constructor() {
         this.loadElements();
-        this.elementsPrototype();
+        Format.elementsPrototype();
+        this.initEvents();
     }
 
     loadElements() {
@@ -11,21 +12,44 @@ class AppController {
         });
     }
 
-    elementsPrototype() {
-        Element.prototype.toggle = function() {
-            this.style.display = this.style.display == 'block' ? 'none' : 'block';
-        };
+    initEvents() {
+        /*let elementsToToggle = [this.elements.myPhoto, this.elements.btnNewContact, this.elements.btnClosePanelEditProfile];
 
-        Element.prototype.on = function(events, fn) {            
-            events.split(' ').forEach(event => {
-                this.addEventListener(event, fn);
+        elementsToToggle.forEach(element => {
+            element.on('click', function() {
+                this.toggleClass('open');
             });
-        }
+        });*/
 
-        Element.prototype.css = function(styles) {
-            for (let name in styles) {
-                this.style[name] = styles[name];
-            }
-        }
+        this.elements.myPhoto.on('click', () => {
+            this.closeLeftPanels();
+            this.elements.panelEditProfile.show();
+            setTimeout(() => {
+                this.elements.panelEditProfile.toggleClass('open');
+            }, 300);
+        });
+
+        this.elements.btnNewContact.on('click', () => {
+            this.closeLeftPanels();
+            this.elements.panelAddContact.show();
+            setTimeout(() => {
+                this.elements.panelAddContact.toggleClass('open');
+            }, 300);
+        });
+
+        this.elements.btnClosePanelEditProfile.on('click', () => {
+            this.closeLeftPanels();
+            this.elements.panelEditProfile.show();
+            this.elements.panelEditProfile.toggleClass('open');
+        });
+
+        this.elements.btnClosePanelAddContact.on('click', () => {
+            this.elements.panelAddContact.toggleClass('open');
+        });
+    }
+
+    closeLeftPanels() {
+        this.elements.panelAddContact.hide();
+        this.elements.panelEditProfile.hide();
     }
 }
