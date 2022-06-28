@@ -59,7 +59,6 @@ class AppController {
         });
 
         this.elements.btnSavePanelEditProfile.on('click', () => {
-            console.log('click', this.elements.inputNamePanelEditProfile.innerHTML);
         });
 
         this.elements.formPanelAddContact.on('submit', event => {
@@ -67,10 +66,86 @@ class AppController {
 
             let datas = this.elements.formPanelAddContact.getJsonFormValues();
         })
+
+        this.elements.contactsMessagesList.querySelectorAll('.contact-item').forEach(item => {
+            item.on('click', () => {
+                this.elements.home.hide();
+                this.elements.main.css({
+                    display: 'flex'
+                });
+            });
+        })
+
+        this.elements.btnAttach.on('click', event => {
+            event.stopPropagation();
+            this.elements.menuAttach.addClass('open');
+            document.addEventListener('click', this.closeAttachedMenu.bind(this));
+        })
+
+        this.elements.btnAttachPhoto.on('click', () => {
+            this.elements.inputPhoto.click();
+        });
+
+        this.elements.inputPhoto.on('change', () => {
+            [...this.elements.inputPhoto.files].forEach(photo => {
+            });
+        });
+
+        this.elements.btnAttachCamera.on('click', () => {
+            this.closeMainPanels();
+            this.elements.panelCamera.addClass('open');
+            this.elements.panelCamera.css({
+                height: 'calc(100%)'
+            });
+        });
+
+        this.elements.btnTakePicture.on('click', () => {
+        });
+
+        this.elements.btnClosePanelCamera.on('click', () => {
+            this.closeMainPanels();
+            this.elements.panelMessagesContainer.show();
+
+        });
+
+        this.elements.btnAttachDocument.on('click', () => {
+            this.closeMainPanels();
+            this.elements.panelDocumentPreview.addClass('open');
+            this.elements.panelDocumentPreview.css({
+                height: 'calc(100%)'
+            });
+        });
+
+        this.elements.btnClosePanelDocumentPreview.on('click', () => {
+            this.closeMainPanels();
+            this.elements.panelMessagesContainer.show();
+        });
+
+        this.elements.btnSendDocument.on('click', () => {
+        });
+
+        this.elements.btnAttachContact.on('click', () => {
+            this.elements.modalContacts.show();
+        });
+
+        this.elements.btnCloseModalContacts.on('click', () => {
+            this.elements.modalContacts.hide();
+        });
     }
 
     closeLeftPanels() {
         this.elements.panelAddContact.hide();
         this.elements.panelEditProfile.hide();
+    }
+
+    closeMainPanels() {
+        this.elements.panelMessagesContainer.hide();
+        this.elements.panelDocumentPreview.removeClass('open');
+        this.elements.panelCamera.removeClass('open');
+    }
+
+    closeAttachedMenu(event) {
+        document.removeEventListener('click', this.closeAttachedMenu);
+        this.elements.menuAttach.removeClass('open');
     }
 }
