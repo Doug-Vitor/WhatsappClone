@@ -138,15 +138,26 @@ export class AppController {
 
         this.elements.inputDocument.on('change', () => {
             if (this.elements.inputDocument.files.length) {
+                this.elements.panelDocumentPreview.css({
+                    height: 'calc(100%)'
+                });
                 let file = this.elements.inputDocument.files[0];
                 this._documentController = new DocumentController(file);
 
                 this._documentController.getPreviewData().then(result => {
+                    this.elements.panelDocumentPreview.css({
+                        height: 'calc(100%)'
+                    });
+                    
+                    console.log(result)
                     this.elements.imgPanelDocumentPreview.src = result.src;
                     this.elements.infoPanelDocumentPreview.innerHTML = result.info;
                     this.elements.imagePanelDocumentPreview.show();
                     this.elements.filePanelDocumentPreview.hide();
                 }).catch(() => {
+                    this.elements.panelDocumentPreview.css({
+                        height: 'calc(100%)'
+                    });
                     this.elements.iconPanelDocumentPreview.className = 'jcxhw icon-doc-generic';
                     this.elements.filenamePanelDocumentPreview.innerHTML = file.name;
                     this.elements.imagePanelDocumentPreview.hide();
