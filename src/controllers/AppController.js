@@ -1,4 +1,7 @@
-class AppController {
+import {Format} from './../utils/Format'
+import {CameraController} from './CameraController'
+
+export class AppController {
     constructor() {
         this.loadElements();
         Format.elementsPrototype();
@@ -13,14 +16,6 @@ class AppController {
     }
 
     initEvents() {
-        /*let elementsToToggle = [this.elements.myPhoto, this.elements.btnNewContact, this.elements.btnClosePanelEditProfile];
-
-        elementsToToggle.forEach(element => {
-            element.on('click', function() {
-                this.toggleClass('open');
-            });
-        });*/
-
         this.elements.myPhoto.on('click', () => {
             this.closeLeftPanels();
             this.elements.panelEditProfile.show();
