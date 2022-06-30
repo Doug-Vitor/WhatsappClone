@@ -97,6 +97,8 @@ class AppController {
             this.elements.panelCamera.css({
                 height: 'calc(100%)'
             });
+
+            this._cameraController = new CameraController(this.elements.videoCamera);
         });
 
         this.elements.btnTakePicture.on('click', () => {
@@ -180,7 +182,7 @@ class AppController {
                 emoji.classList.forEach(className => {
                     img.classList.add(className);
                 })
-                
+
                 this.insertEmoji(img);
                 this.elements.inputText.dispatchEvent(new Event('keyup'));
             });
