@@ -1,4 +1,5 @@
 import {Format} from './../utils/Format'
+import { MethodsExtensions } from '../utils/MethodsExtensions';
 import {CameraController} from './CameraController'
 import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
@@ -189,6 +190,10 @@ export class AppController {
             
             this.startAudioTimer();
             this._microphoneController = new MicrophoneController();
+            this._microphoneController.on('ready', () => {
+                console.log('ready');
+                this._microphoneController.startRecording();
+            });
         });
 
         this.elements.btnCancelMicrophone.on('click', () => {
@@ -279,7 +284,7 @@ export class AppController {
         this.elements.recordMicrophone.hide();
         this.elements.btnSendMicrophone.show();
         clearInterval(this._recordAudioInterval);
-        this._microphoneController.stopRecord();
+        this._microphoneController.stopRecording();
     }
 
     startAudioTimer() {
