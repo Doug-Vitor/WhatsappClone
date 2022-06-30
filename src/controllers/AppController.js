@@ -97,6 +97,22 @@ export class AppController {
         });
 
         this.elements.btnTakePicture.on('click', () => {
+            let dataUrl = this._cameraController.takePicture();
+            
+            this.elements.pictureCamera.src = dataUrl;
+            this.elements.pictureCamera.show();
+            this.elements.videoCamera.hide();
+            this.elements.btnReshootPanelCamera.show();
+            this.elements.btnTakePicture.hide();
+            this.elements.containerSendPicture.show();
+        });
+
+        this.elements.btnReshootPanelCamera.on('click', () => {
+            this.elements.pictureCamera.hide();
+            this.elements.videoCamera.show();
+            this.elements.btnReshootPanelCamera.hide();
+            this.elements.containerTakePicture.show();
+            this.elements.containerSendPicture.hide();
         });
 
         this.elements.btnClosePanelCamera.on('click', () => {
@@ -116,6 +132,7 @@ export class AppController {
         this.elements.btnClosePanelDocumentPreview.on('click', () => {
             this.closeMainPanels();
             this.elements.panelMessagesContainer.show();
+            this._cameraController.stopRecord();
         });
 
         this.elements.btnSendDocument.on('click', () => {
