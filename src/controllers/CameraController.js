@@ -6,7 +6,6 @@ export class CameraController {
         }).then(stream => {
             this._stream = stream;
             this._videoEl.srcObject = stream;
-            console.log('then');
             this._videoEl.play();
         }).catch(error => {
             console.error(error);

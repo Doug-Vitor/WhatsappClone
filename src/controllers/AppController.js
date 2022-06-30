@@ -1,5 +1,6 @@
 import {Format} from './../utils/Format'
 import {CameraController} from './CameraController'
+import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
 
 export class AppController {
@@ -149,7 +150,6 @@ export class AppController {
                         height: 'calc(100%)'
                     });
                     
-                    console.log(result)
                     this.elements.imgPanelDocumentPreview.src = result.src;
                     this.elements.infoPanelDocumentPreview.innerHTML = result.info;
                     this.elements.imagePanelDocumentPreview.show();
@@ -188,6 +188,7 @@ export class AppController {
             this.elements.btnSendMicrophone.hide();
             
             this.startAudioTimer();
+            this._microphoneController = new MicrophoneController();
         });
 
         this.elements.btnCancelMicrophone.on('click', () => {
@@ -278,6 +279,7 @@ export class AppController {
         this.elements.recordMicrophone.hide();
         this.elements.btnSendMicrophone.show();
         clearInterval(this._recordAudioInterval);
+        this._microphoneController.stopRecord();
     }
 
     startAudioTimer() {
