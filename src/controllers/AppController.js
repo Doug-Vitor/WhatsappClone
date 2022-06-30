@@ -172,10 +172,19 @@ class AppController {
 
         this.elements.panelEmojis.querySelectorAll('.emojik').forEach(emoji => {
             emoji.on('click', () => {
-                console.log(emoji.dataset.unicode);
-            })
-        });
+                let img = this.elements.imgEmojiDefault.cloneNode();
+                img.style.cssText = emoji.style.cssText;
+                img.dataset.unicode = emoji.dataset.unicode;
+                img.alt = emoji.dataset.unicode;
 
+                emoji.classList.forEach(className => {
+                    img.classList.add(className);
+                })
+                
+                this.insertEmoji(img);
+                this.elements.inputText.dispatchEvent(new Event('keyup'));
+            });
+        });
         this.elements.btnSend.on('click', () => {
         });
     }
@@ -189,6 +198,24 @@ class AppController {
     closeLeftPanels() {
         this.elements.panelAddContact.hide();
         this.elements.panelEditProfile.hide();
+    }
+
+    insertEmoji(emoji) {
+        let cursor = window.getSelection();
+        if (!cursor.focusNode || !cursor.focusNode.id == 'input-text') {
+            this.elements.inputText.focus();
+            cursor = window.getSelection();
+        }
+
+        let range = document.createRange();
+        range = cursor.getRangeAt(0);
+        range.deleteContents();
+
+        let fragment = document.createDocumentFragment();
+        fragment.appendChild(emoji);
+        
+        range.insertNode(fragment);
+        range.setStartAfter(emoji);
     }
 
     closeAttachedMenu(event) {
