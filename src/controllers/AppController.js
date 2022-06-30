@@ -1,5 +1,6 @@
 import {Format} from './../utils/Format'
 import {CameraController} from './CameraController'
+import { DocumentController } from './DocumentController';
 
 export class AppController {
     constructor() {
@@ -103,7 +104,7 @@ export class AppController {
             this.elements.pictureCamera.show();
             this.elements.videoCamera.hide();
             this.elements.btnReshootPanelCamera.show();
-            this.elements.btnTakePicture.hide();
+            this.elements.containerTakePicture.hide();
             this.elements.containerSendPicture.show();
         });
 
@@ -113,6 +114,10 @@ export class AppController {
             this.elements.btnReshootPanelCamera.hide();
             this.elements.containerTakePicture.show();
             this.elements.containerSendPicture.hide();
+        });
+
+        this.elements.btnSendPicture.on('click', () => {
+            
         });
 
         this.elements.btnClosePanelCamera.on('click', () => {
@@ -127,6 +132,27 @@ export class AppController {
             this.elements.panelDocumentPreview.css({
                 height: 'calc(100%)'
             });
+
+            this.elements.inputDocument.click();
+        });
+
+        this.elements.inputDocument.on('change', () => {
+            if (this.elements.inputDocument.files.length) {
+                let file = this.elements.inputDocument.files[0];
+                this._documentController = new DocumentController(file);
+
+                this._documentController.getPreviewData().then(result => {
+                    this.elements.imgPanelDocumentPreview.src = result.src;
+                    this.elements.infoPanelDocumentPreview.innerHTML = result.info;
+                    this.elements.imagePanelDocumentPreview.show();
+                    this.elements.filePanelDocumentPreview.hide();
+                }).catch(() => {
+                    this.elements.iconPanelDocumentPreview.className = 'jcxhw icon-doc-generic';
+                    this.elements.filenamePanelDocumentPreview.innerHTML = file.name;
+                    this.elements.imagePanelDocumentPreview.hide();
+                    this.elements.filePanelDocumentPreview.show();
+                });
+            }
         });
 
         this.elements.btnClosePanelDocumentPreview.on('click', () => {
