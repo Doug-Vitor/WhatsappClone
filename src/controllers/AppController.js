@@ -188,11 +188,14 @@ export class AppController {
             this.elements.recordMicrophone.show();
             this.elements.btnSendMicrophone.hide();
             
-            this.startAudioTimer();
             this._microphoneController = new MicrophoneController();
             this._microphoneController.on('ready', () => {
-                console.log('ready');
                 this._microphoneController.startRecording();
+            });
+
+            this._microphoneController.on('recordtimer', timer => {
+                this.elements.recordMicrophoneTimer.innerHTML = Format.toTime(timer);
+
             });
         });
 
@@ -285,12 +288,5 @@ export class AppController {
         this.elements.btnSendMicrophone.show();
         clearInterval(this._recordAudioInterval);
         this._microphoneController.stopRecording();
-    }
-
-    startAudioTimer() {
-        let start = Date.now();
-        this._recordAudioInterval = setInterval(() => {
-            this.elements.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now() - start);
-        }, 100);
     }
 }

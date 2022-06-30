@@ -50,14 +50,29 @@ export class MicrophoneController extends MethodsExtensions {
             });
 
             this._mediaRecorder.start();
+            this.startTimer();
         }
     }
 
     stopRecording() {
         if (this._available) {
+            this._mediaRecorder.stop();
+            this.stopTimer();
+
             this._stream.getTracks().forEach(track => {
                 track.stop();
             })
         }
+    }
+
+    startTimer() {
+        let start = Date.now();
+        this._recordAudioInterval = setInterval(timer => {
+            this.trigger('recordtimer', Date.now() - start)
+        }, 100);
+    }
+
+    stopTimer() {
+        clearInterval(this._recordAudioInterval);
     }
 }
