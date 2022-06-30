@@ -146,6 +146,38 @@ class AppController {
         this.elements.btnFinishMicrophone.on('click', () => {
             this.closeMicrophoneArea();
         });
+
+        this.elements.inputText.on('keyup', () => {
+            if (this.elements.inputText.innerHTML.length) {
+                this.elements.inputPlaceholder.hide();
+                this.elements.btnSendMicrophone.hide();
+                this.elements.btnSend.show();
+            } else {
+                this.elements.inputPlaceholder.show();
+                this.elements.btnSendMicrophone.show();
+                this.elements.btnSend.hide();
+            }
+        });
+
+        this.elements.inputText.on('keypress', event => {
+            if (event.key === 'Enter' && !event.ctrlKey) {
+                event.preventDefault();
+                this.elements.btnSend.click();
+            }
+        });
+
+        this.elements.btnEmojis.on('click', () => {
+            this.elements.panelEmojis.toggleClass('open');
+        });
+
+        this.elements.panelEmojis.querySelectorAll('.emojik').forEach(emoji => {
+            emoji.on('click', () => {
+                console.log(emoji.dataset.unicode);
+            })
+        });
+
+        this.elements.btnSend.on('click', () => {
+        });
     }
 
     closeMainPanels() {
