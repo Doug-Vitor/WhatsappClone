@@ -1,14 +1,27 @@
 import {Format} from './../utils/Format'
-import { MethodsExtensions } from '../utils/MethodsExtensions';
 import {CameraController} from './CameraController'
 import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
+import { Firebase } from '../utils/Firebase';
 
 export class AppController {
     constructor() {
         this.loadElements();
         Format.elementsPrototype();
         this.initEvents();
+        
+        this.firebase = new Firebase();
+        this.initAuth();
+    }
+
+    initAuth() {
+        this.firebase.initAuth().then(response => {
+            this._user = response;
+        }).catch(error => {
+            alert("Can't continue without auth");
+            this.initAuth();
+            console.error(error);
+        });
     }
 
     loadElements() {
