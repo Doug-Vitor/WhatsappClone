@@ -3,6 +3,7 @@ import {CameraController} from './CameraController'
 import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
 import { Firebase } from '../utils/Firebase';
+import { User } from '../models/User';
 
 export class AppController {
     constructor() {
@@ -16,11 +17,11 @@ export class AppController {
 
     initAuth() {
         this.firebase.initAuth().then(response => {
-            this._user = response;
+            this.firebase.saveUser(new User(response.displayName, response.email, response.photoURL));
         }).catch(error => {
-            alert("Can't continue without auth");
-            this.initAuth();
             console.error(error);
+            //alert("Can't continue without auth");
+            //this.initAuth();
         });
     }
 
