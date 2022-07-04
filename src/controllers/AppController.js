@@ -2,8 +2,6 @@ import {Format} from './../utils/Format'
 import {CameraController} from './CameraController'
 import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
-import { Firebase } from '../utils/Firebase';
-import { User } from '../models/User';
 
 export class AppController {
     constructor() {
@@ -11,18 +9,7 @@ export class AppController {
         Format.elementsPrototype();
         this.initEvents();
         
-        this.firebase = new Firebase();
         this.initAuth();
-    }
-
-    initAuth() {
-        this.firebase.initAuth().then(response => {
-            this.firebase.saveUser(new User(response.displayName, response.email, response.photoURL));
-        }).catch(error => {
-            console.error(error);
-            //alert("Can't continue without auth");
-            //this.initAuth();
-        });
     }
 
     loadElements() {
