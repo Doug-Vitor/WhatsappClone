@@ -17,8 +17,8 @@ export class Format {
     static timeStampToTime(timeStamp, locale = 'pt-BR') {
         return typeof timeStamp.toDate === 'function' ?
             timeStamp.toDate().toLocaleTimeString(locale, {
-                hours: '2-digit',
-                minutes: '2-digit'
+                hour: '2-digit',
+                minute: '2-digit'
             })
             : ''
     }

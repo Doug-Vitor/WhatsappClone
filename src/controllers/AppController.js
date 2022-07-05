@@ -454,13 +454,23 @@ export class AppController {
                     let data = doc.data();
                     data.id = doc.id;
 
-                    if(!messagesPanel.querySelector(`#_${data.id}`)) {
-                        let message = new Message();
-                        message.fromJSON(data);
+                    let message = new Message();
+                    message.fromJSON(data);                    
+                    let isMyMsg = data.from === this._user.email ? true: false;
 
-                        let myMessage = data.from === this._user.email ? true: false;
-                        
-                        messagesPanel.appendChild(message.getViewElement(myMessage));
+                    let messageElement = messagesPanel.querySelector(`#_${data.id}`);
+                    if(!messageElement) {
+                        if(!isMyMsg) {
+                            doc.ref.set({
+                                status:'read'
+                            }, {
+                                merge: true
+                            })
+                        }
+
+                        messagesPanel.appendChild(message.getViewElement(isMyMsg));
+                    } else if (isMyMsg) {
+                        messageElement.querySelector('.message-status').innerHTML = message.getStatusViewElement().outerHTML;
                     }
                 });
 
