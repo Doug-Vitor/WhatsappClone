@@ -412,6 +412,9 @@ export class AppController {
     }
 
     setActiveChat(contact) {
+        if (this._activeContact)
+            Message.getRef(this._activeContact.chatId).onSnapshot(() => {});
+
         this._activeContact = contact;
 
         this.elements.activeName.innerHTML = contact.name;
@@ -427,6 +430,26 @@ export class AppController {
         this.elements.main.css({
             display: 'flex'
         })
+
+        Message.getRef(this._activeContact.chatId).orderBy('timeStamp')
+            .onSnapshot(docs => {
+                let messagesPanel = this.elements.panelMessagesContainer;
+                messagesPanel.innerHTML = '';
+
+                docs.forEach(doc => {
+                    let data = doc.data();
+                    data.id = doc.id;
+
+                    if(!messagesPanel.querySelector(`#_${data.id}`)) {
+                        let message = new Message();
+                        message.fromJSON(data);
+
+                        let myMessage = data.from === this._user.email ? true: false;
+                        
+                        messagesPanel.appendChild(message.getViewElement(myMessage));
+                    }
+                });
+            })
     }
 
     closeMainPanels() {

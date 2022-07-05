@@ -14,6 +14,15 @@ export class Format {
         else return `${minutes}:${seconds}`
     }
 
+    static timeStampToTime(timeStamp, locale = 'pt-BR') {
+        return typeof timeStamp.toDate === 'function' ?
+            timeStamp.toDate().toLocaleTimeString(locale, {
+                hours: '2-digit',
+                minutes: '2-digit'
+            })
+            : ''
+    }
+
     static elementsPrototype() {
         Element.prototype.toggle = function() {
             this.style.display = this.style.display == 'block' ? 'none' : 'block';
