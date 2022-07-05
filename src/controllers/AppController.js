@@ -2,6 +2,7 @@ import {Format} from './../utils/Format'
 import {CameraController} from './CameraController'
 import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
+import { Firebase } from '../utils/Firebase';
 
 export class AppController {
     constructor() {
@@ -9,7 +10,18 @@ export class AppController {
         Format.elementsPrototype();
         this.initEvents();
         
+        this._firebase = new Firebase();
         this.initAuth();
+    }
+
+    initAuth() {
+        this._firebase.initAuth().then(response => {
+            console.log(response);
+        }).catch(error => {
+            alert('Authentication is required');
+            console.error(error);
+            this.initAuth();
+        })
     }
 
     loadElements() {
