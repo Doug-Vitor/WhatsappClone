@@ -174,6 +174,7 @@ export class AppController {
 
         this.elements.inputPhoto.on('change', () => {
             [...this.elements.inputPhoto.files].forEach(photo => {
+                Message.sendImage(this._activeContact.chatId, this._user.email, photo)
             });
         });
 
