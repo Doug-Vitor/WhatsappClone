@@ -431,10 +431,14 @@ export class AppController {
             display: 'flex'
         })
 
+        let messagesPanel = this.elements.panelMessagesContainer;
+        messagesPanel.innerHTML = '';
         Message.getRef(this._activeContact.chatId).orderBy('timeStamp')
             .onSnapshot(docs => {
-                let messagesPanel = this.elements.panelMessagesContainer;
-                messagesPanel.innerHTML = '';
+
+                let scrollTop = messagesPanel.scrollTop;
+                let scrollMax = messagesPanel.scrollHeight - messagesPanel.offsetHeight;
+                let autoScroll = scrollTop >= scrollMax;
 
                 docs.forEach(doc => {
                     let data = doc.data();
@@ -449,6 +453,11 @@ export class AppController {
                         messagesPanel.appendChild(message.getViewElement(myMessage));
                     }
                 });
+
+                if (autoScroll)
+                    messagesPanel.scrollTop = messagesPanel.scrollHeight - messagesPanel.offsetHeight;
+                else
+                    messagesPanel.scrollTop = scrollTop;
             })
     }
 
