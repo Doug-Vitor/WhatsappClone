@@ -1,3 +1,4 @@
+import { Firebase } from '../utils/Firebase';
 import { Model } from './Model'
 
 export class Message extends Model {
@@ -16,6 +17,10 @@ export class Message extends Model {
 
     get status() { return this._data.status; }
     set status(value) { this._data.status = value; }
+
+    static getRef(chatId) {
+        return Firebase.firestore().collection('chats').doc(chatId).collection('messages');
+    }
 
     getViewElement(myMessage = true) {
         let div = document.createElement('div');
@@ -284,5 +289,15 @@ export class Message extends Model {
 
         div.firstElementChild.classList.add(myMessage ? 'message-out' : 'message-in');
         return div;
+    }
+
+    static send(chatId, from, type, content) {
+        return Message.getRef(chatId).add({
+            content,
+            timeStamp: new Date(),
+            status: 'wait',
+            type,
+            from
+        });
     }
 } 

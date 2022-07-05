@@ -5,6 +5,7 @@ import { DocumentController } from './DocumentController';
 import { Firebase } from '../utils/Firebase';
 import { User } from '../models/User';
 import { Chat } from '../models/Chat';
+import { Message } from '../models/Message';
 
 export class AppController {
     constructor() {
@@ -323,6 +324,12 @@ export class AppController {
             });
         });
         this.elements.btnSend.on('click', () => {
+            let textField = this.elements.inputText;
+
+            Message.send(this._activeContact.chatId, this._user.email, 'text', textField.innerHTML);
+
+            textField.innerHTML = '';
+            this.elements.panelEmojis.removeClass('open');
         });
     }
 
@@ -394,19 +401,7 @@ export class AppController {
                 }
 
                 div.on('click', () => {
-                    this.elements.activeName.innerHTML = contact.name;
-                    this.elements.activeStatus.innerHTML = contact.status;
-
-                    if (contact.photo) {
-                        let photo = this.elements.activePhoto;
-                        photo.src = contact.photo;
-                        photo.show();
-                    }
-
-                    this.elements.home.hide();
-                    this.elements.main.css({
-                        display: 'flex'
-                    })
+                    this.setActiveChat(contact);
                 });
 
                 messagesList.appendChild(div);
@@ -414,6 +409,24 @@ export class AppController {
         });
 
         this._user.getContacts();
+    }
+
+    setActiveChat(contact) {
+        this._activeContact = contact;
+
+        this.elements.activeName.innerHTML = contact.name;
+        this.elements.activeStatus.innerHTML = contact.status;
+
+        if (contact.photo) {
+            let photo = this.elements.activePhoto;
+            photo.src = contact.photo;
+            photo.show();
+        }
+
+        this.elements.home.hide();
+        this.elements.main.css({
+            display: 'flex'
+        })
     }
 
     closeMainPanels() {
