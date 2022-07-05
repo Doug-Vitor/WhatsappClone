@@ -4,6 +4,7 @@ import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
 import { Firebase } from '../utils/Firebase';
 import { User } from '../models/User';
+import { Chat } from '../models/Chat';
 
 export class AppController {
     constructor() {
@@ -123,8 +124,15 @@ export class AppController {
             let contact = new User(datas.get('email'));
             contact.on('datachange', data => {
                 if (data.name) {
-                    this._user.addContact(contact).then(() => {
-                        this.elements.btnClosePanelAddContact.click();
+                    Chat.create(this._user.email, contact.email).then(chat => {
+                        contact.chatId = chat.id;
+
+                        this._user.chatId = chat.id;
+                        contact.addContact(this._user);
+
+                        this._user.addContact(contact).then(() => {
+                            this.elements.btnClosePanelAddContact.click();
+                        });
                     });
                 } else {
                     let error = 'User not found';
