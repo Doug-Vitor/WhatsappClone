@@ -106,6 +106,12 @@ export class AppController {
         });
 
         this.elements.btnSavePanelEditProfile.on('click', () => {
+            this.elements.btnSavePanelEditProfile = true;
+
+            this._user.name = this.elements.inputNamePanelEditProfile.innerHTML;
+            this._user.save().then(() => {
+                this.elements.btnSavePanelEditProfile = false;
+            });
         });
 
         this.elements.formPanelAddContact.on('submit', event => {
