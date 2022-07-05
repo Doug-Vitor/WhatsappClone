@@ -3,6 +3,7 @@ import {CameraController} from './CameraController'
 import {MicrophoneController} from './MicrophoneController'
 import { DocumentController } from './DocumentController';
 import { Firebase } from '../utils/Firebase';
+import { User } from '../models/User';
 
 export class AppController {
     constructor() {
@@ -16,7 +17,15 @@ export class AppController {
 
     initAuth() {
         this._firebase.initAuth().then(response => {
-            console.log(response);
+            this._user = new User();
+            
+            let userRef = User.getByEmail(response.email);
+            userRef.set({
+                name: response.displayName,
+                email: response.email,
+                photo: response.photoURL
+            });
+
         }).catch(error => {
             alert('Authentication is required');
             console.error(error);

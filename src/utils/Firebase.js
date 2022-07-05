@@ -34,12 +34,12 @@ export class Firebase {
     }
 
     //db
-    firestore() {
+    static firestore() {
         return firebase.firestore();
     }
 
     //hd
-    storage() {
+    static storage() {
         return firebase.storage();
     }
 }
