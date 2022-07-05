@@ -152,6 +152,16 @@ export class AppController {
             });
         })
 
+        this.elements.inputSearchContacts.on('keyup', () => {
+            if (this.elements.inputSearchContacts.value.length>0) {
+                this.elements.inputSearchContactsPlaceholder.hide();
+                this._user.getContacts(this.elements.inputSearchContacts.value);
+            } else {
+                this.elements.inputSearchContactsPlaceholder.show();
+                this._user.getContacts()
+            }
+        });
+
         this.elements.btnAttach.on('click', event => {
             event.stopPropagation();
             this.elements.menuAttach.addClass('open');
