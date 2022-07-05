@@ -17,6 +17,14 @@ export class User extends Model {
     get photo() { return this._data.photo; }
     set photo(value) { this._data.photo = value; }
 
+    static getRef() {
+        return Firebase.firestore().collection('/users');
+    }
+
+    static getByEmail(email) {
+        return User.getRef().doc(email);
+    }
+
     getById(id) {
         return new Promise((resolve, reject) => {
             User.getByEmail(id).onSnapshot(doc => {
@@ -30,11 +38,7 @@ export class User extends Model {
         return User.getByEmail(this.email).set(this.toJSON());
     }
 
-    static getRef() {
-        return Firebase.firestore().collection('/users');
-    }
-
-    static getByEmail(email) {
-        return User.getRef().doc(email);
+    addContact(contact) {
+        return User.getRef().doc(this.email).collection('contact').doc(btoa(contact.email)).set(contact.toJSON());
     }
 }

@@ -117,7 +117,20 @@ export class AppController {
         this.elements.formPanelAddContact.on('submit', event => {
             event.preventDefault();
 
-            let datas = this.elements.formPanelAddContact.getJsonFormValues();
+            let datas = new FormData(this.elements.formPanelAddContact);
+
+            let contact = new User(datas.get('email'));
+            contact.on('datachange', data => {
+                if (data.name) {
+                    this._user.addContact(contact).then(() => {
+                        this.elements.btnClosePanelAddContact.click();
+                    });
+                } else {
+                    let error = 'User not found';
+                    console.error(error);
+                    alert(error);
+                }
+            });
         })
 
         this.elements.contactsMessagesList.querySelectorAll('.contact-item').forEach(item => {
