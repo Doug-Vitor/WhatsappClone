@@ -17,20 +17,47 @@ export class AppController {
 
     initAuth() {
         this._firebase.initAuth().then(response => {
-            this._user = new User();
+            this._user = new User(response.email);
             
-            let userRef = User.getByEmail(response.email);
-            userRef.set({
-                name: response.displayName,
-                email: response.email,
-                photo: response.photoURL
+            this._user.on('datachange', data => {
+                this.updateProfileDatas(data);
+            });
+            
+            this._user.name = response.displayName;
+            this._user.email = response.email;
+            this._user.photo = response.photoURL;
+
+            this._user.save().then(() => {
+                this.elements.appContent.css({
+                    display: 'flex'
+                });
+            }).catch(error => {
+                console.error(error);
+                alert('Authentication failure');
             });
 
         }).catch(error => {
-            alert('Authentication is required');
             console.error(error);
+            alert('Authentication is required');
             this.initAuth();
         })
+    }
+
+    updateProfileDatas(data) {
+        document.querySelector('title').innerHTML = data.name + ' WhatsApp Clone';
+        this.elements.inputNamePanelEditProfile.innerHTML = data.name;
+
+        if (data.photo) {
+            let photo = this.elements.imgPanelEditProfile;
+            photo.src = data.photo;
+            photo.show();
+
+            this.elements.imgDefaultPanelEditProfile.hide();
+        
+            let photo2= this.elements.myPhoto.querySelector('img');
+            photo2.src = data.photo;
+            photo2.show();
+        }
     }
 
     loadElements() {
