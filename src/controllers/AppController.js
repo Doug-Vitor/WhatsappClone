@@ -385,6 +385,22 @@ export class AppController {
                     photo.show();
                 }
 
+                div.on('click', () => {
+                    this.elements.activeName.innerHTML = contact.name;
+                    this.elements.activeStatus.innerHTML = contact.status;
+
+                    if (contact.photo) {
+                        let photo = this.elements.activePhoto;
+                        photo.src = contact.photo;
+                        photo.show();
+                    }
+
+                    this.elements.home.hide();
+                    this.elements.main.css({
+                        display: 'flex'
+                    })
+                });
+
                 messagesList.appendChild(div);
             });
         });
