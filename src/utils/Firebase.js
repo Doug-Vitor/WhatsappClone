@@ -42,4 +42,20 @@ export class Firebase {
     static storage() {
         return firebase.storage();
     }
+
+    static uploadFile(file, from) {
+        return new Promise((resolve, reject) => {
+            let uploadTask = Firebase.storage().ref(from).child(`${Date.now()}_${file.name}`).put(file);
+            
+            uploadTask.on('state_changed', () => {}, error => {
+                reject(error);
+            }, () => {
+                uploadTask.snapshot.ref.getDownloadURL().then(url => {
+                    resolve(url);
+                }).catch(error => {
+                    reject(error);
+                })
+            });
+        })
+    }
 }

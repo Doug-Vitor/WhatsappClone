@@ -103,6 +103,19 @@ export class AppController {
             this.elements.inputProfilePhoto.click();
         });
 
+        this.elements.inputProfilePhoto.on('change', () => {
+            if (this.elements.inputProfilePhoto.files.length > 0) {
+                let file = this.elements.inputProfilePhoto.files[0]
+
+                Firebase.uploadFile(file, this._user.email).then(url => {
+                    this._user.photo = url;
+                    this._user.save().then(() => {
+                        this.elements.btnClosePanelEditProfile.click();
+                    });
+                });
+            }
+        });
+
         this.elements.inputNamePanelEditProfile.on('keypress', event => {
             if (event.key === 'Enter') {
                 event.preventDefault();
