@@ -7,6 +7,7 @@ import { User } from '../models/User';
 import { Chat } from '../models/Chat';
 import { Message } from '../models/Message';
 import { Base64 } from '../utils/Base64';
+import { ContactsController } from './ContactsController';
 
 export class AppController {
     constructor() {
@@ -126,7 +127,7 @@ export class AppController {
             let contact = new User(datas.get('email'));
             contact.on('datachange', data => {
                 if (data.name) {
-                    Chat.create(this._user.email, contact.email).then(chat => {
+                    Chat.createIfNotExists(this._user.email, contact.email).then(chat => {
                         contact.chatId = chat.id;
 
                         this._user.chatId = chat.id;
@@ -215,8 +216,6 @@ export class AppController {
             let mimeType = result[1];
             let extension = mimeType.split('/')[1];
             let filename = `camera${Date.now()}.${extension}`;
-
-            console.log(result);
 
             let picture = new Image();
             picture.src = this.elements.pictureCamera.src;
@@ -317,11 +316,17 @@ export class AppController {
         });
 
         this.elements.btnAttachContact.on('click', () => {
-            this.elements.modalContacts.show();
+            this._contactsController = new ContactsController(this.elements.modalContacts, this._user);
+            
+            this._contactsController.on('select', contact => {
+                Message.sendContact(this._activeContact.chatId, this._user.email, contact);
+            });
+            
+            this._contactsController.open();
         });
 
         this.elements.btnCloseModalContacts.on('click', () => {
-            this.elements.modalContacts.hide();
+            this._contactsController.close();
         });
 
         this.elements.btnSendMicrophone.on('click', () => {
@@ -509,6 +514,7 @@ export class AppController {
                     let message = new Message();
                     message.fromJSON(data);                    
                     let isMyMsg = data.from === this._user.email ? true: false;
+                    let view = message.getViewElement(isMyMsg);
 
                     let messageElement = messagesPanel.querySelector(`#_${data.id}`);
                     if(!messageElement) {
@@ -520,12 +526,31 @@ export class AppController {
                             })
                         }
 
-                        messagesPanel.appendChild(message.getViewElement(isMyMsg));
-                    } else
-                        messagesPanel.querySelector(`#_${data.id}`).innerHTML = message.getViewElement(isMyMsg).innerHTML;
+                        messagesPanel.appendChild(view);
+                    } else {
+                        let parent = messagesPanel.querySelector(`#_${data.id}`).parentNode;
+                        parent.replaceChild(view, messagesPanel.querySelector(`#_${data.id}`));
+                    }
                     
                     if (messageElement && isMyMsg)
                         messageElement.querySelector('.message-status').innerHTML = message.getStatusViewElement().outerHTML;
+                
+                    if (message.type === 'contact') {
+                        view.querySelector('.btn-message-send').on('click', () => {
+                            Chat.createIfNotExists(this._user.email, message.content.email).then(chat => {
+                                let contact = new User(message.content.email);
+                                contact.on('datachange', () => {
+                                    contact.chatId = chat.id;
+                                    this._user.addContact(contact);
+    
+                                    this._user.chatId = chat.id;
+                                    contact.addContact(this._user);
+                                    
+                                    this.setActiveChat(contact);
+                                });
+                            });
+                        });
+                    }
                 });
 
                 if (autoScroll)
