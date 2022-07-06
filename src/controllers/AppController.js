@@ -6,6 +6,7 @@ import { Firebase } from '../utils/Firebase';
 import { User } from '../models/User';
 import { Chat } from '../models/Chat';
 import { Message } from '../models/Message';
+import { Base64 } from '../utils/Base64';
 
 export class AppController {
     constructor() {
@@ -213,7 +214,7 @@ export class AppController {
             let result = this.elements.pictureCamera.src.match(/^data:(.+);base64,(.*)$/);
             let mimeType = result[1];
             let extension = mimeType.split('/')[1];
-            let filename = `camera${Date.now()}.${xtension}`;
+            let filename = `camera${Date.now()}.${extension}`;
 
             console.log(result);
 
@@ -304,6 +305,15 @@ export class AppController {
         });
 
         this.elements.btnSendDocument.on('click', () => {
+            let file = this.elements.inputDocument.files[0];
+            let base64 = this.elements.imgPanelDocumentPreview.src;
+
+            file.type === 'application/pdf' ?
+                Base64.generateFile(base64).then(filePreview => {
+                  Message.sendDocument(this._activeContact.chatId, this._user.email, file, filePreview, this.elements.infoPanelDocumentPreview.innerHTML)  
+                }) : Message.sendDocument(this._activeContact.chatId, this._user.email, file, base64);
+        
+            this.elements.btnClosePanelDocumentPreview.click();
         });
 
         this.elements.btnAttachContact.on('click', () => {
@@ -511,9 +521,11 @@ export class AppController {
                         }
 
                         messagesPanel.appendChild(message.getViewElement(isMyMsg));
-                    } else if (isMyMsg) {
+                    } else
+                        messagesPanel.querySelector(`#_${data.id}`).innerHTML = message.getViewElement(isMyMsg).innerHTML;
+                    
+                    if (messageElement && isMyMsg)
                         messageElement.querySelector('.message-status').innerHTML = message.getStatusViewElement().outerHTML;
-                    }
                 });
 
                 if (autoScroll)
