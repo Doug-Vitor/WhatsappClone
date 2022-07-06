@@ -208,7 +208,48 @@ export class AppController {
         });
 
         this.elements.btnSendPicture.on('click', () => {
+            this.elements.btnSendPicture.disabled = true;
+
+            let result = this.elements.pictureCamera.src.match(/^data:(.+);base64,(.*)$/);
+            let mimeType = result[1];
+            let extension = mimeType.split('/')[1];
+            let filename = `camera${Date.now()}.${xtension}`;
+
+            console.log(result);
+
+            let picture = new Image();
+            picture.src = this.elements.pictureCamera.src;
+            picture.onload = () => {
+                let canvas = document.createElement('canvas');
+                let context = canvas.getContext('2d');
+
+                canvas.width = picture.width;
+                canvas.height = picture.height;
+
+                context.translate(picture.width, 0);
+                context.scale(-1, 1);
+
+                context.drawImage(picture, 0, 0, canvas.width, canvas.height);
             
+                fetch(canvas.toDataURL(mimeType)).then(result => {
+                    return result.arrayBuffer();
+                }).then(buffer => {
+                    return new File([buffer], filename, {
+                        type: mimeType
+                    });
+                }).then(file => {
+                    Message.sendImage(this._activeContact.chatId, this._user.email, file);
+                    this.elements.btnSendPicture.disabled = false;
+                    this.closeMainPanels();
+                    this._cameraController.stopRecord();
+                    this.elements.btnReshootPanelCamera.hide();
+                    this.elements.pictureCamera.hide();
+                    this.elements.videoCamera.show();
+                    this.elements.containerSendPicture.hide();
+                    this.elements.containerTakePicture.show();
+                    this.elements.panelMessagesContainer.show();
+                });
+            }
         });
 
         this.elements.btnClosePanelCamera.on('click', () => {
