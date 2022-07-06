@@ -349,6 +349,10 @@ export class AppController {
         });
 
         this.elements.btnFinishMicrophone.on('click', () => {
+            this._microphoneController.on('recorded', (file, metadata) => {
+                Message.sendAudio(this._activeContact.chatId, this._user.email, file, metadata, this._user.photo);
+            });
+            
             this.closeMicrophoneArea();
         });
 

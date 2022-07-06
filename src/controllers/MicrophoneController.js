@@ -41,11 +41,21 @@ export class MicrophoneController extends MethodsExtensions {
                     type: this._mimeType
                 });
 
-                let file = new File([blob], `audio${Date.now()}.webm`, {
-                    type: this._mimeType,
-                    lastModified: Date.now()
-                });
-                
+                let audioContext = new AudioContext();
+                let reader = new FileReader();
+
+                reader.onload = () => {
+                    audioContext.decodeAudioData(reader.result).then(decode => {
+                        let file = new File([blob], `audio${Date.now()}.webm`, {
+                            type: this._mimeType,
+                            lastModified: Date.now()
+                        });
+
+                        this.trigger('recorded', file, decode);
+                    })
+                }
+
+                reader.readAsArrayBuffer(blob);
                 this.stopRecording();
             });
 
