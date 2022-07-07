@@ -11,12 +11,51 @@ import { ContactsController } from './ContactsController';
 
 export class AppController {
     constructor() {
+        this._active = true;
+
         this.loadElements();
         Format.elementsPrototype();
         this.initEvents();
+
         
         this._firebase = new Firebase();
         this.initAuth();
+
+        this.checkNotifications();
+    }
+
+    checkNotifications() {
+        if (typeof Notification === 'function' && !this._active) {
+            if (Notification.permission !== 'granted')
+                this.elements.alertNotificationPermission.show();
+            else
+                this.elements.alertNotificationPermission.hide();
+
+            this.elements.alertNotificationPermission.on('click', () => {
+                Notification.requestPermission(permission => {
+                    if (permission === 'granted') {
+                        this.elements.alertNotificationPermission.hide();
+                    }
+                });
+            });
+        }
+    }
+
+    notification(data) {
+        if (Notification.permission === 'granted') {
+            let notification = new Notification(this._activeContact.name, {
+                icon: this._activeContact.photo,
+                body: data.content
+            });
+
+            let sound = new Audio('./audio/alert.mp3');
+            sound.currentTime = 0;
+            sound.play();
+
+            setTimeout(() => {
+                if (notification) notification.close();
+            }, 5000);
+        }
     }
 
     initAuth() {
@@ -73,6 +112,14 @@ export class AppController {
     }
 
     initEvents() {
+        window.addEventListener('focus', () => {
+            this._active = true;
+        });
+
+        window.addEventListener('blur', () => {
+            this._active = true;
+        });
+
         this.elements.myPhoto.on('click', () => {
             this.closeLeftPanels();
             this.elements.panelEditProfile.show();
@@ -517,6 +564,9 @@ export class AppController {
 
         let messagesPanel = this.elements.panelMessagesContainer;
         messagesPanel.innerHTML = '';
+
+        this._receivedMessages = [];
+
         Message.getRef(this._activeContact.chatId).orderBy('timeStamp')
             .onSnapshot(docs => {
 
@@ -532,6 +582,12 @@ export class AppController {
                     message.fromJSON(data);                    
                     let isMyMsg = data.from === this._user.email ? true: false;
                     let view = message.getViewElement(isMyMsg);
+
+                    if (!isMyMsg && this._receivedMessages.filter(id => { return (id === data.id) }).length === 0) {
+                        console.log('notiff')
+                        this.notification(data);
+                        this._receivedMessages.push(data.id);
+                    }
 
                     let messageElement = messagesPanel.querySelector(`#_${data.id}`);
                     if(!messageElement) {
