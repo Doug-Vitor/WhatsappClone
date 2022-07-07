@@ -584,7 +584,6 @@ export class AppController {
                     let view = message.getViewElement(isMyMsg);
 
                     if (!isMyMsg && this._receivedMessages.filter(id => { return (id === data.id) }).length === 0) {
-                        console.log('notiff')
                         this.notification(data);
                         this._receivedMessages.push(data.id);
                     }
